@@ -1,0 +1,29 @@
+header {
+    background-color: rgb(11, 11, 145);
+    color: white;
+    height: fit-content;
+    text-align: center;
+    padding: 10px;
+}
+label {
+    font-weight: 600;
+}
+aside {
+    width: 30%;
+    padding-left: 15px;
+    float: left;
+    background-color: lightgray;
+}
+section {
+    float: right;
+    width: 65%;
+    margin: 0px;
+    padding: 0px;
+}
+.current-info {
+    height: 350px;
+}
+
+.col-2 {
+    height: 150px;
+}
