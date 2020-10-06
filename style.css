@@ -31,7 +31,8 @@ section {
 }
 
 .col{
-    height: 150px;
+    min-height: 150px;
+    height: fit-content;
 }
 .forecast-boxes{
     margin: 10px;
@@ -39,5 +40,4 @@ section {
 #box0, #box1, #box2, #box3, #box4{
     background-color: blue;
     color: cornsilk;
-
 } 
