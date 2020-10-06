@@ -10,9 +10,13 @@ label {
 }
 aside {
     width: 30%;
-    padding-left: 15px;
+    padding: 5px;
     float: left;
     background-color: lightgray;
+    height: 100%;
+}
+.search-list {
+    padding: 10px;
 }
 section {
     float: right;
@@ -22,8 +26,18 @@ section {
 }
 .current-info {
     height: 350px;
+    margin-right: 10px;
+    padding: 20px 10px;
 }
 
-.col-2 {
+.col{
     height: 150px;
 }
+.forecast-boxes{
+    margin: 10px;
+}
+#box0, #box1, #box2, #box3, #box4{
+    background-color: blue;
+    color: cornsilk;
+
+} 

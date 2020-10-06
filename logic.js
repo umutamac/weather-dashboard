@@ -1,8 +1,8 @@
-const form = document.querySelector('form');//search section
-const cityList = document.querySelector('.city-list'); //the div where city names will show at
-const submitBtn = document.querySelector('#submit'); //submit button
-const cityInput = document.getElementById('cityInput'); // the search bar
-const clearbtn = document.getElementById('clear'); // clear button
+// const form = document.querySelector('form');//search section
+// const cityList = document.querySelector('.city-list'); //the div where city names will show at
+// const submitBtn = document.querySelector('#submit'); //submit button
+// const cityInput = document.getElementById('cityInput'); // the search bar
+// const clearbtn = document.getElementById('clear'); // clear button
 
 // let cityArray 
 // if (localStorage.getItem('cityKey')) {
@@ -48,44 +48,58 @@ const clearbtn = document.getElementById('clear'); // clear button
 
 
 //---------------------------------------------------------------
-//Ajax part - API key 78244aeb7fca6683e6a91e3953c941ac
+//Ajax part
+//$(document).ready( function() {
 const APIkey = "78244aeb7fca6683e6a91e3953c941ac";
-submitBtn.click(function(event){
+$("#submit").click(function(event){
     event.preventDefault();
-    var cityCall = cityInput.val();
-    var queryURL = "api.openweathermap.org/data/2.5/weather?q="+cityCall+
+    var Lon = "";
+    var Lat = "";
+    var cityInput = $("#cityInput").val();
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q="+cityInput+
     "&units=metric&appid="+APIkey;
+    $("#cityInput").val("");
     $.ajax({
         url: queryURL,
         method: "GET"
     }).then(function(response) {
-        console.log(cityCall + " and "+response);
-        
-        $("#cityName").text("City: "+cityCall);
-        localStorage.setItem("City: "+response.name)
+        console.log("Current Weather:");
+        console.log(response);
+        $("#cityName").text(response.name+" "+response.weather[0].icon); // icon is only printing a string
+        $("#temp").text("Temperature: "+response.main.temp+" C");
+        $("#hum").text("Humidity: "+response.main.humidity+" %");
+        $("#windSpeed").text("Wind Speed: "+response.wind.speed+" m/s");
+        Lon = response.coord.lon;
+        console.log("lon: "+Lon);
+        Lat = response.coord.lat;
+        console.log("lat: "+Lat);
+        });
 
-        $("#temp").text("Temperature: "+response.main.temp)
-        $("#hum").text("Humidity: "+response.main.humidity)
-        $("#windSpeed").text("Wind Speed: "+response.main.speed)
-        $("#UVindex").text("UV Index: "+response.weathe[0].description)
-    })
-    displayForecast();
-});
+    // seperate api call for UV Index
+    var UVIqueryURL ="https://api.openweathermap.org/data/2.5/uvi?lat="+Lat+"&lon="+Lon+"&appid="+APIkey;
+    console.log(UVIqueryURL); //Lat and Lon are not being put into the UVI URL
+    $.ajax({
+        url: UVIqueryURL,
+        method: "GET"
+    }).then(function(response) {
+            console.log(response);
+            $("#UVindex").text("UV Index: "+response.value);
+        });
 
-function displayForecast() {
-    var forecastURL = "api.openweathermap.org/data/2.5/forecast?q="+cityCall+
-    "&units=metric&appid="+APIkey;
-
+    var forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q="+cityInput+"&units=metric&appid="+APIkey;
     $.ajax({
         url: forecastURL,
         method: "GET"
     }).then(function(response) {
+        console.log("5 day fc:");
         console.log(response);
-        //for (i=0;i<5;i++){}
-        
-        
+        for (i=0;i<5;i++){
+        $("#box"+i).append($("<p>").addClass("fc-temp").text("Temp: "+response.list[i].main.temp+" C"));   
+        $("#box"+i).append($("<p>").addClass("fc-hum").text("Humidty: "+response.list[i].main.humidity+" %"));
+        }   
         })
+ 
+ });
 
 
 
-}
