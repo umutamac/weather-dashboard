@@ -30,14 +30,16 @@ section {
     padding: 20px 10px;
 }
 
-.col{
-    min-height: 150px;
-    height: fit-content;
-}
+
 .forecast-boxes{
     margin: 10px;
 }
-#box0, #box1, #box2, #box3, #box4{
+.forecast-boxes > * {
+    margin: 10px 10px;
     background-color: blue;
     color: cornsilk;
+    padding: 10px;
+    min-height: 150px;
+    min-width: 100px;
+    height: fit-content;
 } 

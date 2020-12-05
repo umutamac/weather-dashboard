@@ -1,35 +1,3 @@
-// let cityArray 
-// if (localStorage.getItem('cityKey')) {
-//     cityArray = JSON.parse(localStorage.getItem('fnameKey'));
-// } else {
-//     cityArray = [];
-// }
-// console.log("city array: " + cityArray);
-
-// localStorage.setItem('cityKey', JSON.stringify(cityArray))
-
-// const cityData = JSON.parse(localStorage.getItem('cityKey'))
-
-// const aMaker = (text1) => {
-//     const a = document.createElement('a')
-//     a.textContent = text1;
-//     a.className("list-group-item list-group-item-action");
-//     cityList.appendChild(a);
-// }
-
-// form.addEventListener('submit', function (event) {
-//     event.preventDefault();
-//     cityArray.push(cityInput.value);
-//     localStorage.setItem('cityKey', JSON.stringify(cityArray));
-//     aMaker(cityInput.value);
-//     cityInput.value = "";
-
-
-// cityData.forEach((cityArray) => {
-//     aMaker(cityInput.value);
-// })
-
-
 $("#clear").click( function () { // clear btn clears the storage and deletes li's
     localStorage.clear();
     $(".city-list").empty();
@@ -64,10 +32,18 @@ $("#submit").click(function(event){
         }).then(function(response) {
             console.log("Current Weather:");
             console.log(response);
-            $("#cityName").text(response.name+" "+response.weather[0].icon); // icon is only printing a string
-            $("#temp").text("Temperature: "+response.main.temp+" C");
-            $("#hum").text("Humidity: "+response.main.humidity+" %");
-            $("#windSpeed").text("Wind Speed: "+response.wind.speed+" m/s");
+
+            var dateObject = new Date(response.dt*1000)
+            var yearDate =  dateObject.toLocaleString("en-US", {year: "numeric"})
+            var monthDate =  dateObject.toLocaleString("en-US", {month: "numeric"})
+            var dayDate =  dateObject.toLocaleString("en-US", {day: "numeric"})
+
+            $("#cityName").text(response.name);
+            $("#date").text(` ${monthDate}/${dayDate}/${yearDate}`);
+            $("#weatherIcon").attr("src",`http://openweathermap.org/img/wn/${response.weather[0].icon}@2x.png`);
+            $("#temp").text(response.main.temp+" C");
+            $("#hum").text(response.main.humidity+"%");
+            $("#windSpeed").text(response.wind.speed+" m/s");
             Lon = response.coord.lon;
             console.log("lon: "+Lon);
             Lat = response.coord.lat;
@@ -80,9 +56,14 @@ $("#submit").click(function(event){
             $.ajax({
                 url: UVIqueryURL,
                 method: "GET"
-            }).then(function(response) {
-                console.log(response);
-                $("#UVindex").text("UV Index: "+response.value);
+            }).then(function(UVIresponse) {
+                console.log(UVIresponse);
+                $("#UVindex").text(UVIresponse.value);
+                var color = "";
+                if (UVIresponse.value <= 3.0) {color="green";}
+                else if (UVIresponse.value < 6.0) {color="yellow";}
+                else if (UVIresponse.value >= 6.0) {color="red";}
+                $("#UVindex").css("background-color", color);
             });
         });
         // 5 Day forecast api call
@@ -93,11 +74,16 @@ $("#submit").click(function(event){
         }).then(function(response) {
             console.log("5 day fc:");
             console.log(response);
-            for (i=0;i<5;i++){ // for each box, empty previous stuff, create elements with text for date, temp, hum
+            for (i=4; i<40; i=i+8 ){ // for each box, empty previous stuff, create elements with text for date, temp, hum
                 $("#box"+i).empty();
-                $("#box"+i).append($("<h4>").addClass("fc-date").text("Date: ")); // need a way to get the date from response   
-                $("#box"+i).append($("<p>").addClass("fc-temp").text("Temp: "+response.list[i].main.temp+" C"));   
-                $("#box"+i).append($("<p>").addClass("fc-hum").text("Humidity: "+response.list[i].main.humidity+" %"));
+                var datetext = response.list[i].dt_txt // "2020-12-06 00:00:00"
+                var date = datetext.slice(0,-9) // "2020-12-06"
+
+                $(".forecast-boxes").prepend($("<div>").addClass("box"+i));
+                $(".box"+i).append($("<h4>").addClass("fc-date").text(date)); // need a way to get the date from response   
+                $(".box"+i).append($("<img>").attr("src",`http://openweathermap.org/img/wn/${response.list[i].weather[0].icon}@2x.png`));
+                $(".box"+i).append($("<p>").addClass("fc-temp").text("Temp: "+response.list[i].main.temp+" C"));   
+                $(".box"+i).append($("<p>").addClass("fc-hum").text("Humidity: "+response.list[i].main.humidity+"%"));
             }   
         })
     }
