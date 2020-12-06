@@ -4,14 +4,12 @@ $("#clear").click( function () { // clear btn clears the storage and deletes li'
 })
 let cityArray = [];
 
-
 function savecitytolist(cityInput) {
     cityArray.push(cityInput);
     localStorage.setItem('cityKey', JSON.stringify(cityArray));
     $(".city-list").prepend( $("<a>").addClass("list-group-item list-group-item-action").text(cityInput))
-  
 }
-//---------------------------------------------------------------
+
 //Ajax part
 const APIkey = "78244aeb7fca6683e6a91e3953c941ac";
 $("#submit").click(function(event){
@@ -23,8 +21,7 @@ $("#submit").click(function(event){
         savecitytolist(cityInput);
         var Lon = "";
         var Lat = "";
-        var queryURL = "https://api.openweathermap.org/data/2.5/weather?q="+cityInput+
-        "&units=metric&appid="+APIkey;
+        var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityInput}&units=metric&appid=${APIkey}`;
         $("#cityInput").val("");
         $.ajax({
             url: queryURL,
@@ -33,10 +30,10 @@ $("#submit").click(function(event){
             console.log("Current Weather:");
             console.log(response);
 
-            var dateObject = new Date(response.dt*1000)
-            var yearDate =  dateObject.toLocaleString("en-US", {year: "numeric"})
-            var monthDate =  dateObject.toLocaleString("en-US", {month: "numeric"})
-            var dayDate =  dateObject.toLocaleString("en-US", {day: "numeric"})
+            var dateObject = new Date(response.dt*1000);
+            var yearDate =  dateObject.toLocaleString("en-US", {year: "numeric"});
+            var monthDate =  dateObject.toLocaleString("en-US", {month: "numeric"});
+            var dayDate =  dateObject.toLocaleString("en-US", {day: "numeric"});
 
             $("#cityName").text(response.name);
             $("#date").text(` ${monthDate}/${dayDate}/${yearDate}`);
@@ -49,9 +46,8 @@ $("#submit").click(function(event){
             Lat = response.coord.lat;
             console.log("lat: "+Lat);
 
-
             // api call for UV Index using lat and lon from previous call
-            var UVIqueryURL ="https://api.openweathermap.org/data/2.5/uvi?lat="+Lat+"&lon="+Lon+"&appid="+APIkey;
+            var UVIqueryURL =`https://api.openweathermap.org/data/2.5/uvi?lat=${Lat}&lon=${Lon}&appid=${APIkey}`;
             console.log(UVIqueryURL);
             $.ajax({
                 url: UVIqueryURL,
@@ -67,19 +63,19 @@ $("#submit").click(function(event){
             });
         });
         // 5 Day forecast api call
-        var forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q="+cityInput+"&units=metric&appid="+APIkey;
+        var forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=${cityInput}&units=metric&appid=${APIkey}`;
         $.ajax({
             url: forecastURL,
             method: "GET"
         }).then(function(response) {
             console.log("5 day fc:");
             console.log(response);
-            for (i=4; i<40; i=i+8 ){ // for each box, empty previous stuff, create elements with text for date, temp, hum
-                $("#box"+i).empty();
+            $(".forecast-boxes").empty();
+            for (i=4; i<40; i+=8 ){
                 var datetext = response.list[i].dt_txt // "2020-12-06 00:00:00"
                 var date = datetext.slice(0,-9) // "2020-12-06"
-
-                $(".forecast-boxes").prepend($("<div>").addClass("box"+i));
+                
+                $(".forecast-boxes").append($("<div>").addClass("box"+i));
                 $(".box"+i).append($("<h4>").addClass("fc-date").text(date)); // need a way to get the date from response   
                 $(".box"+i).append($("<img>").attr("src",`http://openweathermap.org/img/wn/${response.list[i].weather[0].icon}@2x.png`));
                 $(".box"+i).append($("<p>").addClass("fc-temp").text("Temp: "+response.list[i].main.temp+" C"));   
