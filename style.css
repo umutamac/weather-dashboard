@@ -9,11 +9,13 @@ label {
     font-weight: 600;
 }
 aside {
-    width: 30%;
+    width: 25%;
     padding: 5px;
     float: left;
     background-color: lightgray;
     height: 100%;
+    border-radius: 5px;
+    margin-left: 20px;
 }
 .search-list {
     padding: 10px;
@@ -25,14 +27,16 @@ section {
     padding: 0px;
 }
 .current-info {
-    height: 350px;
-    margin-right: 10px;
+    min-height: 300px;
+    margin-right: 20px;
     padding: 20px 10px;
+    border-radius: 5px;
+
 }
 
 
 .forecast-boxes{
-    margin: 10px;
+    margin: 10px 10px;
 }
 .forecast-boxes > * {
     margin: 10px 10px;
@@ -40,6 +44,11 @@ section {
     color: cornsilk;
     padding: 10px;
     min-height: 150px;
-    min-width: 100px;
+    min-width: 180px;
+    max-width: 300px;
     height: fit-content;
 } 
+.box {
+    text-align: center;
+    border-radius: 5px;
+}

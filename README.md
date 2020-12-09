@@ -6,3 +6,5 @@ When user enters a city name in search bar, the city name gets saved into local 
 
 Github Repo: https://github.com/umutamac/weather-dashboard
 Depolyed Project: https://umutamac.github.io/weather-dashboard/
+
+![Weather Dashboard](/Assets/weather_dashboard.png?raw=true "Weather Dashboard")

@@ -7,26 +7,25 @@ let cityArray = [];
 function savecitytolist(cityInput) {
     cityArray.push(cityInput);
     localStorage.setItem('cityKey', JSON.stringify(cityArray));
-    $(".city-list").prepend( $("<a>").addClass("list-group-item list-group-item-action").text(cityInput))
+    $(".city-list").prepend( $("<a>").addClass("list-group-item list-group-item-action pastSearch").text(cityInput))
 }
 
 //Ajax part
 const APIkey = "78244aeb7fca6683e6a91e3953c941ac";
-$("#submit").click(function(event){
+$("#submit").click(function makeSearch(event){
     event.preventDefault();
-    var cityInput = $("#cityInput").val();
-    if (cityInput==""){ // if input is empty, don't do anything
+    var cityInput = $("#cityInput").val().trim();
+    if (cityInput===""){ // if input is empty, don't do anything
         return
     } else {
+        console.log("------>"+cityInput);
         savecitytolist(cityInput);
-        var Lon = "";
-        var Lat = "";
         var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityInput}&units=metric&appid=${APIkey}`;
         $("#cityInput").val("");
         $.ajax({
             url: queryURL,
             method: "GET"
-        }).then(function(response) {
+        }).then(function currentWeatherCall(response) {
             console.log("Current Weather:");
             console.log(response);
 
@@ -36,23 +35,22 @@ $("#submit").click(function(event){
             var dayDate =  dateObject.toLocaleString("en-US", {day: "numeric"});
 
             $("#cityName").text(response.name);
-            $("#date").text(` ${monthDate}/${dayDate}/${yearDate}`);
+            $("#date").text(` ${yearDate}/${monthDate}/${dayDate}`);
             $("#weatherIcon").attr("src",`http://openweathermap.org/img/wn/${response.weather[0].icon}@2x.png`);
             $("#temp").text(response.main.temp+" C");
             $("#hum").text(response.main.humidity+"%");
             $("#windSpeed").text(response.wind.speed+" m/s");
-            Lon = response.coord.lon;
-            console.log("lon: "+Lon);
-            Lat = response.coord.lat;
-            console.log("lat: "+Lat);
+            lonOutput = response.coord.lon;
+            latOutput = response.coord.lat;
+            console.log("lat: "+latOutput+"lon: "+lonOutput);
 
             // api call for UV Index using lat and lon from previous call
-            var UVIqueryURL =`https://api.openweathermap.org/data/2.5/uvi?lat=${Lat}&lon=${Lon}&appid=${APIkey}`;
+            var UVIqueryURL =`https://api.openweathermap.org/data/2.5/uvi?lat=${latOutput}&lon=${lonOutput}&appid=${APIkey}`;
             console.log(UVIqueryURL);
             $.ajax({
                 url: UVIqueryURL,
                 method: "GET"
-            }).then(function(UVIresponse) {
+            }).then(function uviCall(UVIresponse) {
                 console.log(UVIresponse);
                 $("#UVindex").text(UVIresponse.value);
                 var color = "";
@@ -67,7 +65,7 @@ $("#submit").click(function(event){
         $.ajax({
             url: forecastURL,
             method: "GET"
-        }).then(function(response) {
+        }).then(function futureWeatherCall(response) {
             console.log("5 day fc:");
             console.log(response);
             $(".forecast-boxes").empty();
@@ -75,7 +73,7 @@ $("#submit").click(function(event){
                 var datetext = response.list[i].dt_txt // "2020-12-06 00:00:00"
                 var date = datetext.slice(0,-9) // "2020-12-06"
                 
-                $(".forecast-boxes").append($("<div>").addClass("box"+i));
+                $(".forecast-boxes").append($("<div>").addClass("col box box"+i));
                 $(".box"+i).append($("<h4>").addClass("fc-date").text(date)); // need a way to get the date from response   
                 $(".box"+i).append($("<img>").attr("src",`http://openweathermap.org/img/wn/${response.list[i].weather[0].icon}@2x.png`));
                 $(".box"+i).append($("<p>").addClass("fc-temp").text("Temp: "+response.list[i].main.temp+" C"));   
@@ -86,4 +84,10 @@ $("#submit").click(function(event){
 });
 
 
-
+// event delegation needed so that dynamcally generated items do fire off when clicked
+$(".city-list").on("click","a", function searchAgain(){
+    var searchTerm = $(this).text();
+    console.log(searchTerm);
+    $("#cityInput").val(searchTerm);
+    $("#submit").trigger( "click" );
+})
