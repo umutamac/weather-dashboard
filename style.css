@@ -5,8 +5,8 @@ header {
     text-align: center;
     padding: 10px;
 }
-label {
-    font-weight: 600;
+.container{
+    width: 95%;
 }
 aside {
     width: 25%;
@@ -15,20 +15,30 @@ aside {
     background-color: lightgray;
     height: 100%;
     border-radius: 5px;
-    margin-left: 20px;
+    /* margin-left: 20px; */
+}
+label {
+    font-weight: 600;
+}
+#cityInput {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.btn {
+    text-align: center;
 }
 .search-list {
     padding: 10px;
 }
 section {
     float: right;
-    width: 65%;
+    width: 70%;
     margin: 0px;
     padding: 0px;
 }
 .current-info {
-    min-height: 300px;
-    margin-right: 20px;
+    /* min-height: 260px; */
+    /* margin-right: 20px; */
     padding: 20px 10px;
     border-radius: 5px;
 
