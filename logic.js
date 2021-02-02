@@ -1,9 +1,13 @@
 let cityArray = [];
-$( document ).ready(function() { //when page loads, import cities from LS and display them in search history
-    cityArray = JSON.parse(window.localStorage.getItem('cityKey'));
-    cityArray.map(city => {
-        $(".city-list").prepend($("<a>").addClass("list-group-item list-group-item-action pastSearch").text(city))
-    })
+$(document).ready(function () { //when page loads, import cities from LS and display them in search history
+    cityArray = JSON.parse(localStorage.getItem('cityKey')); // returns null if no item with given key
+    if (cityArray !== null) { //if there is an item with cityKey as the key
+        cityArray.map(city => { //render them on screen
+            $(".city-list").prepend($("<a>").addClass("list-group-item list-group-item-action pastSearch").text(city))
+        })
+    } else { //if there is no item in LS
+        cityArray = [] //set array to empty
+    }
 });
 
 function savecitytolist(cityInput) {
@@ -25,14 +29,12 @@ function savecitytolist(cityInput) {
 const APIkey = "78244aeb7fca6683e6a91e3953c941ac";
 $("#submit").click(function makeSearch(event) {
     event.preventDefault();
-    var cityInput = $("#cityInput").val().trim();
-    if (cityInput === "") { // if input is empty, don't do anything
-        return
-    } else {
+    let cityInput = $("#cityInput").val().trim();
+    if (cityInput !== "") { // do the rest if input is not empty string
         console.log("------>" + cityInput);
         savecitytolist(cityInput);
-        var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityInput}&units=metric&appid=${APIkey}`;
-        $("#cityInput").val("");
+        let queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityInput}&units=metric&appid=${APIkey}`;
+        $("#cityInput").val(""); //clear text in seach box
         $.ajax({
             url: queryURL,
             method: "GET"
